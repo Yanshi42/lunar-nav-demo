@@ -40,7 +40,7 @@ main { height: calc(100vh - 72px); }
 .stars::after { background-size: 157px 157px; transform: translate(73px,31px); opacity:.7; }
 .globe-copy { z-index: 2; max-width: 320px; padding-left: 6px; }
 .eyebrow { margin: 0 0 13px; color: var(--teal); font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
-.globe-copy h1 { margin: 0; font-size: clamp(26px, 2.9vw, 46px); line-height: 1.12; letter-spacing: -.05em; }
+.globe-copy h1 { --headline-size: clamp(26px, 2.9vw, 46px); margin: 0; font-size: var(--headline-size); line-height: 1.12; letter-spacing: -.05em; }
 .globe-copy h1 span { display: block; white-space: nowrap; }
 .globe-copy > p:not(.eyebrow) { color: var(--muted); line-height: 1.8; max-width: 280px; font-size: 14px; }
 .source-stamp { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; border: 1px solid var(--line); border-radius: 999px; color: #80969e; font-size: 10px; padding: 7px 11px; letter-spacing: .08em; }
@@ -173,7 +173,7 @@ dialog dd { margin:5px 0 0; font-size:11px; }
   main { height:auto; min-height:calc(100vh - 64px); }
   .globe-view { min-height:calc(100vh - 64px); display:flex; flex-direction:column; padding:24px 16px; overflow:auto; }
   .globe-copy { order:1; max-width:none; width:100%; }
-  .globe-copy h1 { font-size:38px; }
+  .globe-copy h1 { --headline-size:38px; }
   .moon-stage { order:2; width:100%; height:42vh; min-height:300px; }
   .destination-panel { order:3; width:100%; max-width:none; }
   .planner-view { min-height:calc(100vh - 64px); height:auto; display:flex; flex-direction:column; }

@@ -7,7 +7,7 @@
     <meta name="description" content="基于 NASA LRO 影像与 LOLA 高程数据的月球表面导航演示。" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23071018'/%3E%3Ccircle cx='31' cy='31' r='21' fill='%23b6c7c9'/%3E%3Ccircle cx='22' cy='23' r='5' fill='%23788f92'/%3E%3Ccircle cx='39' cy='37' r='7' fill='%23869c9e'/%3E%3Cpath d='M12 50c12-18 25-14 40-34' fill='none' stroke='%235ce1d0' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
     <title>月面航迹 · LunarNav</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20261003-two-line-title" />
   </head>
   <body>
     <div class="app-shell">
@@ -25,7 +25,7 @@
           <div class="stars" aria-hidden="true"></div>
           <div class="globe-copy">
             <p class="eyebrow">GLOBAL MISSION SELECTOR</p>
-            <h1><span>定位任务区域</span><span>规划月面航迹</span></h1>
+            <h1 style="font-size: var(--headline-size, clamp(26px, 2.9vw, 46px)); line-height: 1.12"><span style="display: block; white-space: nowrap">定位任务区域</span><span style="display: block; white-space: nowrap">规划月面航迹</span></h1>
             <p>拖拽球体查看月球各面，点击近等面积球面方格，进入真实高程地图规划航迹。</p>
             <div class="source-stamp"><span>DATA</span>LRO WAC · LOLA 16 ppd</div>
           </div>
