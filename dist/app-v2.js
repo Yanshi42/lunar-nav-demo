@@ -1,4 +1,6 @@
-import { LunarGlobe, tileFromCoordinate } from "./globe.js";
+import { LunarGlobe } from "./globe.js";
+import { TILE_COUNT, tileCoordinate, tileDimensionsKm, tileFromCoordinate } from "./sphere-grid.js";
+import { loadTileRaster } from "./terrain-source.js";
 import { Terrain } from "./terrain.js";
 import { Router } from "./routing.js";
 
@@ -31,10 +33,7 @@ function signed(value, positive, negative) {
 }
 
 function position(point) {
-  return {
-    lat: state.tile.north - point.y * 5,
-    lon: state.tile.west + point.x * 5,
-  };
+  return tileCoordinate(state.tile, point.x, point.y);
 }
 
 function shortCoordinate(point) {
@@ -44,7 +43,8 @@ function shortCoordinate(point) {
 }
 
 function tileLabel(tile) {
-  return `${signed(tile.south, "N", "S")}–${signed(tile.north, "N", "S")} / ${signed(tile.west, "E", "W")}–${signed(tile.east, "E", "W")}`;
+  const { width, height } = tileDimensionsKm(tile);
+  return `中心 ${signed(tile.lat, "N", "S")} · ${signed(tile.lon, "E", "W")} · 约 ${Math.round(width)} × ${Math.round(height)} km`;
 }
 
 async function drawPreview(tile) {
@@ -56,14 +56,18 @@ async function drawPreview(tile) {
   const ctx = canvas.getContext("2d");
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.fillStyle = "#10242d"; ctx.fillRect(0, 0, box.width, box.height);
-  const img = new Image();
-  img.onload = () => {
+  try {
+    const size = 128;
+    const raster = await loadTileRaster(tile, size, state.ppd, false);
     if (tile.id !== state.tile.id) return;
+    const preview = document.createElement("canvas");
+    preview.width = preview.height = size;
+    preview.getContext("2d").putImageData(new ImageData(raster.relief, size, size), 0, 0);
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
-    const pixels = state.ppd * 5;
-    ctx.drawImage(img, tile.col * pixels, 0, pixels, pixels, 0, 0, box.width, box.height);
-  };
-  img.src = `assets/relief-band-${String(tile.row).padStart(2, "0")}.jpg`;
+    ctx.drawImage(preview, 0, 0, box.width, box.height);
+  } catch (error) {
+    if (tile.id === state.tile.id) console.error(error);
+  }
 }
 
 function selectTile(tile, centerGlobe = false) {
@@ -71,7 +75,7 @@ function selectTile(tile, centerGlobe = false) {
   $("#latInput").value = tile.lat.toFixed(1);
   $("#lonInput").value = tile.lon.toFixed(1);
   $("#regionCoordinates").textContent = `${signed(tile.lat, "N", "S")}  ${signed(tile.lon, "E", "W")}`;
-  $("#mapRegionLabel").textContent = `月面分片 ${tile.id.toUpperCase()} · 5° × 5°`;
+  $("#mapRegionLabel").textContent = `月面分片 ${tile.id.toUpperCase()} · 球面方格`;
   $("#mapBounds").textContent = tileLabel(tile);
   state.globe?.select(tile);
   if (centerGlobe) state.globe?.centerOn(tile.lat, tile.lon);
@@ -170,7 +174,7 @@ async function planRoute() {
     let km = 0, climb = 0, maximum = 0;
     for (let i = 1; i < result.route.length; i++) {
       const a = result.route[i - 1], b = result.route[i];
-      const horizontal = Math.hypot((b.x - a.x) * terrain.widthKm, (b.y - a.y) * terrain.heightKm);
+      const horizontal = terrain.segmentKm(a, b);
       const dz = values[i] - values[i - 1];
       km += Math.hypot(horizontal, dz / 1000);
       climb += Math.max(0, dz);
@@ -196,6 +200,8 @@ async function enterPlanner() {
   $("#globeView").hidden = true;
   $("#plannerView").hidden = false;
   $("#canvasLoading").hidden = false;
+  terrain.view = "2d";
+  $$(".view-switch button").forEach((button) => button.classList.toggle("active", button.dataset.view === "2d"));
   window.scrollTo(0, 0);
   try {
     await terrain.load(state.tile);
@@ -308,6 +314,7 @@ async function init() {
   $("#dataResolution").textContent = `LOLA 全球高程 · ${manifest.ppd} px/°`;
   $("#aboutResolution").textContent = `${manifest.ppd} 像素 / 度`;
   $("#aboutTilePixels").textContent = `${manifest.ppd * 5} × ${manifest.ppd * 5}`;
+  $("#tileCount").textContent = TILE_COUNT.toLocaleString("zh-CN");
   const texture = new Image();
   texture.src = "assets/moon-color.jpg";
   await texture.decode();

@@ -1,4 +1,4 @@
-"""Prepare compact 5-degree-ready bands from NASA LRO/LOLA global data."""
+"""Prepare compact latitude bands for spherical-grid reprojection in the browser."""
 
 from __future__ import annotations
 
@@ -74,10 +74,10 @@ def main() -> None:
     manifest = {
         "source": f"NASA LRO WAC / LOLA {SOURCE_PPD} ppd global, averaged to {PPD} ppd",
         "ppd": PPD,
-        "tileDegrees": 5,
-        "longitudeCells": 72,
-        "latitudeCells": 36,
-        "tileCount": 2592,
+        "tileScheme": "spherified-cube",
+        "cubeFaces": 6,
+        "cellsPerFaceSide": 18,
+        "tileCount": 1944,
         "heightEncoding": "red * 256 + green; elevation_m = value * 0.5 - 10000",
         "heightReferenceRadiusKm": 1737.4,
     }

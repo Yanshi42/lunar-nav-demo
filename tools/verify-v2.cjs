@@ -65,6 +65,20 @@ async function mapClick(page, x, y) {
   await page.locator("#heightSlider").fill("2");
   await page.screenshot({ path: path.join(output, "terrain-3d.png") });
 
+  await page.click("#brandButton");
+  await page.selectOption("#regionSelect", "south-pole");
+  const polarLabel = await page.locator("#mapBounds").textContent();
+  await page.screenshot({ path: path.join(output, "polar-globe.png") });
+  await page.click("#enterPlanner");
+  await page.waitForSelector("#canvasLoading", { state: "hidden", timeout: 30000 });
+  await page.click("#chooseStart");
+  await mapClick(page, 0.14, 0.2);
+  await page.click("#chooseEnd");
+  await mapClick(page, 0.82, 0.8);
+  await page.waitForFunction(() => document.querySelector("#distanceMetric").textContent !== "—", { timeout: 30000 });
+  const polarKm = await page.locator("#distanceMetric").textContent();
+  await page.screenshot({ path: path.join(output, "polar-route.png") });
+
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   mobile.on("pageerror", (error) => errors.push(`mobile: ${error.message}`));
   await mobile.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
@@ -74,7 +88,7 @@ async function mapClick(page, x, y) {
   await mobile.waitForSelector("#canvasLoading", { state: "hidden", timeout: 30000 });
   await mobile.screenshot({ path: path.join(output, "mobile-planner.png"), fullPage: true });
 
-  const result = { selected, orderedKm, order, errors };
+  const result = { selected, orderedKm, order, polarLabel, polarKm, errors };
   fs.writeFileSync(path.join(output, "verification.json"), JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result));
   await browser.close();

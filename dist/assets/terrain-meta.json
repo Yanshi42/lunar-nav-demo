@@ -1,10 +1,10 @@
 {
   "source": "NASA LRO WAC / LOLA 64 ppd global, averaged to 32 ppd",
   "ppd": 32,
-  "tileDegrees": 5,
-  "longitudeCells": 72,
-  "latitudeCells": 36,
-  "tileCount": 2592,
+  "tileScheme": "spherified-cube",
+  "cubeFaces": 6,
+  "cellsPerFaceSide": 18,
+  "tileCount": 1944,
   "heightEncoding": "red * 256 + green; elevation_m = value * 0.5 - 10000",
   "heightReferenceRadiusKm": 1737.4
 }

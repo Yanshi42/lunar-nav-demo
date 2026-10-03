@@ -1,5 +1,5 @@
-const RAD = Math.PI / 180;
-const DEG = 180 / Math.PI;
+import { CELLS_PER_FACE, coordinateVector, faceVector, tileFromCoordinate,
+  tileVector, vectorCoordinate } from "./sphere-grid.js";
 const norm = (v) => { const d = Math.hypot(...v) || 1; return v.map((x) => x / d); };
 const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -20,28 +20,6 @@ const fromTo = (a, b) => {
   if (w < 1e-7) return [...norm(cross(a, Math.abs(a[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0])), 0];
   return norm([...axis, w]);
 };
-const geoVector = (lat, lon) => {
-  const p = lat * RAD, l = lon * RAD;
-  return [Math.cos(p) * Math.sin(l), Math.sin(p), Math.cos(p) * Math.cos(l)];
-};
-
-export function tileFromCoordinate(lat, lon) {
-  const wrappedLon = ((lon + 180) % 360 + 360) % 360 - 180;
-  const row = Math.min(35, Math.max(0, Math.floor((90 - Math.min(lat, 89.999999)) / 5)));
-  const col = Math.min(71, Math.max(0, Math.floor((wrappedLon + 180) / 5)));
-  return {
-    row, col,
-    lat: 87.5 - row * 5,
-    lon: -177.5 + col * 5,
-    north: 90 - row * 5,
-    south: 85 - row * 5,
-    west: -180 + col * 5,
-    east: -175 + col * 5,
-    span: 5,
-    id: `r${String(row).padStart(2, "0")}-c${String(col).padStart(2, "0")}`,
-  };
-}
-
 export class LunarGlobe {
   constructor(canvas, texture, onSelect) {
     this.canvas = canvas;
@@ -85,12 +63,11 @@ export class LunarGlobe {
     const eye = this.localPoint(event);
     if (!eye) return null;
     const world = rotate(conjugate(this.orientation), eye);
-    return { lat: Math.asin(Math.max(-1, Math.min(1, world[1]))) * DEG,
-      lon: Math.atan2(world[0], world[2]) * DEG };
+    return vectorCoordinate(world);
   }
 
   centerOn(lat, lon) {
-    this.orientation = fromTo(geoVector(lat, lon), [0, 0, 1]);
+    this.orientation = fromTo(coordinateVector(lat, lon), [0, 0, 1]);
     this.invalidate();
   }
 
@@ -190,7 +167,11 @@ export class LunarGlobe {
   }
 
   project(lat, lon, g) {
-    const eye = rotate(this.orientation, geoVector(lat, lon));
+    return this.projectVector(coordinateVector(lat, lon), g);
+  }
+
+  projectVector(vector, g) {
+    const eye = rotate(this.orientation, vector);
     return { x: g.cx + eye[0] * g.radius, y: g.cy - eye[1] * g.radius, visible: eye[2] >= 0 };
   }
 
@@ -198,38 +179,32 @@ export class LunarGlobe {
     const ctx = this.ctx;
     ctx.strokeStyle = "rgba(175, 240, 236, .12)";
     ctx.lineWidth = 0.55;
-    for (let lon = -180; lon < 180; lon += 5) {
-      ctx.beginPath(); let pen = false;
-      for (let lat = -90; lat <= 90; lat += 2.5) {
-        const p = this.project(lat, lon, g);
-        if (p.visible) { if (!pen) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); pen = true; }
-        else pen = false;
+    const samples = CELLS_PER_FACE * 6;
+    for (let face = 0; face < 6; face++) for (let axis = 0; axis < 2; axis++) {
+      for (let line = 0; line <= CELLS_PER_FACE; line++) {
+        const fixed = -1 + line * 2 / CELLS_PER_FACE;
+        ctx.beginPath(); let pen = false;
+        for (let step = 0; step <= samples; step++) {
+          const free = -1 + step * 2 / samples;
+          const p = this.projectVector(faceVector(face, axis ? free : fixed, axis ? fixed : free), g);
+          if (p.visible) { if (!pen) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); pen = true; }
+          else pen = false;
+        }
+        ctx.stroke();
       }
-      ctx.stroke();
-    }
-    for (let lat = -85; lat <= 85; lat += 5) {
-      ctx.beginPath(); let pen = false;
-      for (let lon = -180; lon <= 180; lon += 2.5) {
-        const p = this.project(lat, lon, g);
-        if (p.visible) { if (!pen) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); pen = true; }
-        else pen = false;
-      }
-      ctx.stroke();
     }
   }
 
   drawTile(tile, g, color, width) {
     const ctx = this.ctx;
-    const corners = [
-      [tile.north, tile.west], [tile.north, tile.east],
-      [tile.south, tile.east], [tile.south, tile.west], [tile.north, tile.west],
-    ];
+    const corners = [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]];
     ctx.beginPath(); let drawn = false;
     for (let edge = 0; edge < 4; edge++) {
       for (let step = 0; step <= 10; step++) {
         const t = step / 10;
-        const p = this.project(corners[edge][0] * (1 - t) + corners[edge + 1][0] * t,
-          corners[edge][1] * (1 - t) + corners[edge + 1][1] * t, g);
+        const p = this.projectVector(tileVector(tile,
+          corners[edge][0] * (1 - t) + corners[edge + 1][0] * t,
+          corners[edge][1] * (1 - t) + corners[edge + 1][1] * t), g);
         if (p.visible) { if (!drawn) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); drawn = true; }
         else drawn = false;
       }

@@ -1,14 +1,8 @@
+import { tileDimensionsKm, tileDistanceKm } from "./sphere-grid.js";
+import { loadTileRaster } from "./terrain-source.js";
+
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 const lerp = (a, b, t) => a + (b - a) * t;
-
-function image(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`无法读取地形资源：${src}`));
-    img.src = src;
-  });
-}
 
 export class Terrain {
   constructor(canvas, profileCanvas) {
@@ -36,23 +30,11 @@ export class Terrain {
   }
 
   async load(tile) {
-    const band = String(tile.row).padStart(2, "0");
-    const [height, relief] = await Promise.all([
-      image(`assets/height-band-${band}.png`),
-      image(`assets/relief-band-${band}.jpg`),
-    ]);
     const size = this.ppd * 5;
-    const cropX = tile.col * size;
-    const raw = document.createElement("canvas");
-    raw.width = raw.height = size;
-    const rawCtx = raw.getContext("2d", { willReadFrequently: true });
-    rawCtx.drawImage(height, cropX, 0, size, size, 0, 0, size, size);
-    const bytes = rawCtx.getImageData(0, 0, size, size).data;
-    const values = new Float32Array(size * size);
+    const { values, relief } = await loadTileRaster(tile, size, this.ppd);
     let min = Infinity, max = -Infinity, total = 0;
     for (let i = 0; i < values.length; i++) {
-      const elevation = (bytes[i * 4] * 256 + bytes[i * 4 + 1]) * 0.5 - 10000;
-      values[i] = elevation;
+      const elevation = values[i];
       min = Math.min(min, elevation); max = Math.max(max, elevation); total += elevation;
     }
     this.tile = tile;
@@ -62,11 +44,12 @@ export class Terrain {
     this.min = min;
     this.max = max;
     this.mean = total / values.length;
-    this.widthKm = Math.PI * 1737.4 / 180 * 5 * Math.cos(tile.lat * Math.PI / 180);
-    this.heightKm = Math.PI * 1737.4 / 180 * 5;
+    const dimensions = tileDimensionsKm(tile);
+    this.widthKm = dimensions.width;
+    this.heightKm = dimensions.height;
     this.reliefCtx.clearRect(0, 0, size, size);
-    this.reliefCtx.drawImage(relief, cropX, 0, size, size, 0, 0, size, size);
-    this.reliefPixels = this.reliefCtx.getImageData(0, 0, size, size).data;
+    this.reliefCtx.putImageData(new ImageData(relief, size, size), 0, 0);
+    this.reliefPixels = relief;
     this.buildRisk();
     this.draw();
   }
@@ -83,14 +66,17 @@ export class Terrain {
 
   slope(point) {
     const dx = 1 / (this.size - 1), dy = dx;
-    const west = this.elevation({ x: point.x - dx, y: point.y });
-    const east = this.elevation({ x: point.x + dx, y: point.y });
-    const north = this.elevation({ x: point.x, y: point.y - dy });
-    const south = this.elevation({ x: point.x, y: point.y + dy });
-    const mx = 2 * dx * this.widthKm * 1000;
-    const my = 2 * dy * this.heightKm * 1000;
-    return Math.atan(Math.hypot((east - west) / mx, (south - north) / my)) * 180 / Math.PI;
+    const w = { x: clamp(point.x - dx, 0, 1), y: point.y };
+    const e = { x: clamp(point.x + dx, 0, 1), y: point.y };
+    const n = { x: point.x, y: clamp(point.y - dy, 0, 1) };
+    const s = { x: point.x, y: clamp(point.y + dy, 0, 1) };
+    const mx = Math.max(1, this.segmentKm(w, e) * 1000);
+    const my = Math.max(1, this.segmentKm(n, s) * 1000);
+    return Math.atan(Math.hypot((this.elevation(e) - this.elevation(w)) / mx,
+      (this.elevation(s) - this.elevation(n)) / my)) * 180 / Math.PI;
   }
+
+  segmentKm(a, b) { return tileDistanceKm(this.tile, a, b); }
 
   buildRisk() {
     const ctx = this.riskCanvas.getContext("2d");
@@ -160,8 +146,9 @@ export class Terrain {
   }
 
   project3d(point, width, height) {
-    const x = (point.x - 0.5) * 2, y = (point.y - 0.5) * 2;
     const effectiveKm = Math.max(25, Math.min(this.widthKm, this.heightKm));
+    const x = (point.x - 0.5) * 2 * this.widthKm / effectiveKm;
+    const y = (point.y - 0.5) * 2 * this.heightKm / effectiveKm;
     const z = ((this.elevation(point) - this.mean) / (effectiveKm * 1000)) * 2 * this.camera.exaggeration;
     const cy = Math.cos(this.camera.yaw), sy = Math.sin(this.camera.yaw);
     const xp = x * cy - y * sy, yp = x * sy + y * cy;

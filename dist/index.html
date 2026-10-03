@@ -26,7 +26,7 @@
           <div class="globe-copy">
             <p class="eyebrow">GLOBAL MISSION SELECTOR</p>
             <h1>从整个月球<br />进入一条路径</h1>
-            <p>拖拽球体查看月球各面，点击任意 5° × 5° 分片，进入真实高程地图规划航迹。</p>
+            <p>拖拽球体查看月球各面，点击近等面积球面方格，进入真实高程地图规划航迹。</p>
             <div class="source-stamp"><span>DATA</span>LRO WAC · LOLA 16 ppd</div>
           </div>
           <div class="moon-stage">
@@ -36,7 +36,7 @@
           <aside class="destination-panel glass-panel">
             <p class="eyebrow">SELECT YOUR DESTINATION</p>
             <h2>下一站，月球表面</h2>
-            <p class="muted">全球 2,592 个分片均可选择。点选球面，也可以输入坐标或跳转到示例地点。</p>
+            <p class="muted">全球 <span id="tileCount">1,944</span> 个近等面积分片均可选择。点选球面，也可以输入坐标或跳转到示例地点。</p>
             <label for="regionSelect">快速定位</label>
             <select id="regionSelect">
               <option value="copernicus">哥白尼环形山附近</option>
@@ -150,7 +150,7 @@
         <button class="dialog-close" id="closeDialog" aria-label="关闭">×</button>
         <p class="eyebrow">ABOUT THE DATA</p>
         <h2>这里显示的地形来自真实月球测绘数据</h2>
-        <p>月面底图来自 NASA LRO 广角相机拼接影像；高程来自 LOLA 全球格网产品。5° × 5° 是本 demo 的交互分片，而非原始数据文件的分片方式。全月面共有 2,592 片，每片约 <span id="aboutTilePixels">160 × 160</span> 个高程采样；显示与路径曲线会插值，但不会产生新的测量细节。</p>
+        <p>月面底图来自 NASA LRO 广角相机拼接影像；高程来自 LOLA 全球格网产品。全球划分为 6 个球面面片、共 1,944 个近等面积方格，极区不会被经线挤成狭长条。每片生成 <span id="aboutTilePixels">160 × 160</span> 的重投影地图格网；重采样和路径平滑不会产生新的测量细节。球面无法由完全相同的正方形无缝覆盖，因此各片面积与形状仍有少量差异。</p>
         <dl><div><dt>水平采样</dt><dd id="aboutResolution">32 像素 / 度</dd></div><div><dt>高程基准</dt><dd>月球半径 1737.4 km</dd></div><div><dt>算法</dt><dd>A* + 精确多点排序</dd></div></dl>
         <p class="fine-print">该 demo 是科研展示与算法原型，不替代任务级地图、定位、动力学与安全验证。</p>
       </dialog>

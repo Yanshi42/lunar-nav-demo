@@ -1,3 +1,5 @@
+import { MOON_RADIUS_KM, tileVector } from "./sphere-grid.js";
+
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
 class MinHeap {
@@ -30,23 +32,37 @@ export class Router {
     this.n = gridSize;
     this.heights = null;
     this.slopes = null;
+    this.vectors = null;
+  }
+
+  distance(a, b) {
+    const v = this.vectors;
+    const offsetA = a * 3, offsetB = b * 3;
+    const cosine = clamp(v[offsetA] * v[offsetB] + v[offsetA + 1] * v[offsetB + 1]
+      + v[offsetA + 2] * v[offsetB + 2], -1, 1);
+    return MOON_RADIUS_KM * Math.atan2(Math.sqrt(Math.max(0, 1 - cosine * cosine)), cosine);
   }
 
   prepare() {
     const n = this.n, terrain = this.terrain;
     this.heights = new Float32Array(n * n);
     this.slopes = new Float32Array(n * n);
+    this.vectors = new Float64Array(n * n * 3);
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-      this.heights[y * n + x] = terrain.elevation({ x: x / (n - 1), y: y / (n - 1) });
+      const index = y * n + x;
+      const point = { x: x / (n - 1), y: y / (n - 1) };
+      this.heights[index] = terrain.elevation(point);
+      this.vectors.set(tileVector(terrain.tile, point.x, point.y), index * 3);
     }
-    const mx = terrain.widthKm * 1000 / (n - 1), my = terrain.heightKm * 1000 / (n - 1);
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
       const left = this.heights[y * n + Math.max(0, x - 1)];
       const right = this.heights[y * n + Math.min(n - 1, x + 1)];
       const up = this.heights[Math.max(0, y - 1) * n + x];
       const down = this.heights[Math.min(n - 1, y + 1) * n + x];
-      const dx = (right - left) / (mx * (x === 0 || x === n - 1 ? 1 : 2));
-      const dy = (down - up) / (my * (y === 0 || y === n - 1 ? 1 : 2));
+      const dx = (right - left) / Math.max(1, this.distance(y * n + Math.max(0, x - 1),
+        y * n + Math.min(n - 1, x + 1)) * 1000);
+      const dy = (down - up) / Math.max(1, this.distance(Math.max(0, y - 1) * n + x,
+        Math.min(n - 1, y + 1) * n + x) * 1000);
       this.slopes[y * n + x] = Math.atan(Math.hypot(dx, dy)) * 180 / Math.PI;
     }
   }
@@ -62,10 +78,8 @@ export class Router {
     const previous = new Int32Array(n * n); previous.fill(-1);
     const visited = new Uint8Array(n * n);
     const heap = new MinHeap();
-    const stepX = terrain.widthKm / (n - 1), stepY = terrain.heightKm / (n - 1);
-    const goalX = goal % n, goalY = Math.floor(goal / n);
-    const heuristic = (x, y) => Math.hypot((goalX - x) * stepX, (goalY - y) * stepY);
-    heap.push({ id: start, f: heuristic(start % n, Math.floor(start / n)) });
+    const heuristic = (id) => this.distance(id, goal);
+    heap.push({ id: start, f: heuristic(start) });
     const neighbors = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
 
     while (heap.length) {
@@ -80,13 +94,13 @@ export class Router {
         const next = ny * n + nx;
         if (visited[next]) continue;
         const slope = (this.slopes[current.id] + this.slopes[next]) / 2;
-        const step = Math.hypot(dx * stepX, dy * stepY);
+        const step = this.distance(current.id, next);
         const penalty = 1 + (risk / 7) * Math.pow(slope / 11, 1.55) * 1.6
           + Math.max(0, slope - 22) ** 2 * 10;
         const candidate = g[current.id] + step * penalty;
         if (candidate < g[next]) {
           g[next] = candidate; previous[next] = current.id;
-          heap.push({ id: next, f: candidate + heuristic(nx, ny) });
+          heap.push({ id: next, f: candidate + heuristic(next) });
         }
       }
     }
