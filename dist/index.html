@@ -26,24 +26,34 @@
           <div class="globe-copy">
             <p class="eyebrow">GLOBAL MISSION SELECTOR</p>
             <h1>从整个月球<br />进入一条路径</h1>
-            <p>选择典型月面区域，使用真实高程数据评估坡度、绕开风险地形并生成可行航迹。</p>
+            <p>拖拽球体查看月球各面，点击任意 5° × 5° 分片，进入真实高程地图规划航迹。</p>
             <div class="source-stamp"><span>DATA</span>LRO WAC · LOLA 16 ppd</div>
           </div>
           <div class="moon-stage">
             <canvas id="moonCanvas" aria-label="可旋转的月球全景"></canvas>
-            <div class="moon-orbit-label">拖动旋转月球 · 滚轮缩放</div>
+            <div class="moon-orbit-label">任意方向拖动 · 点击球面选片 · 滚轮缩放</div>
           </div>
           <aside class="destination-panel glass-panel">
             <p class="eyebrow">SELECT YOUR DESTINATION</p>
             <h2>下一站，月球表面</h2>
-            <p class="muted">选一个典型区域，进入地形与路径规划。</p>
-            <label for="regionSelect">任务区域</label>
-            <select id="regionSelect"></select>
+            <p class="muted">全球 2,592 个分片均可选择。点选球面，也可以输入坐标或跳转到示例地点。</p>
+            <label for="regionSelect">快速定位</label>
+            <select id="regionSelect">
+              <option value="copernicus">哥白尼环形山附近</option>
+              <option value="taurus">陶拉斯-利特罗谷附近</option>
+              <option value="tycho">第谷环形山附近</option>
+              <option value="south-pole">月球南极附近</option>
+            </select>
+            <div class="coordinate-inputs">
+              <label>纬度 <input id="latInput" type="number" min="-90" max="90" step="0.1" value="9.6" /></label>
+              <label>经度 <input id="lonInput" type="number" min="-180" max="180" step="0.1" value="-20.1" /></label>
+              <button id="locateButton" class="secondary-button">定位到分片</button>
+            </div>
             <div class="coordinate-card">
-              <span>区域中心</span>
+              <span>当前分片中心</span>
               <strong id="regionCoordinates">—</strong>
             </div>
-            <div class="region-preview" id="regionPreview" aria-hidden="true"></div>
+            <canvas class="region-preview" id="regionPreview" aria-label="当前分片的月面地形预览"></canvas>
             <button class="primary-button" id="enterPlanner">进入区域规划</button>
             <p class="fine-print">研究级概念验证 · 不用于真实任务决策</p>
           </aside>
@@ -59,10 +69,19 @@
             <div class="sidebar-section route-section">
               <span class="step-index">02</span>
               <div class="section-body">
-                <p class="section-kicker">航迹端点</p>
-                <div class="point-row"><span class="point-dot start"></span><span>起点</span><strong id="startCoord">未选择</strong></div>
-                <div class="point-row"><span class="point-dot end"></span><span>终点</span><strong id="endCoord">未选择</strong></div>
-                <p class="hint" id="mapHint">单击地图重新设置起点</p>
+                <p class="section-kicker">路径模式</p>
+                <div class="mode-tabs" role="group" aria-label="路径模式">
+                  <button id="orderedMode" class="active" type="button">按顺序途经</button>
+                  <button id="unorderedMode" type="button">无序目标最短路</button>
+                </div>
+                <p class="mode-description" id="modeDescription">起点 → 途经点 → 终点，按添加顺序连接。</p>
+                <div class="point-pickers">
+                  <button id="chooseStart" type="button"><span class="point-dot start"></span>起点 <strong id="startCoord">未选择</strong></button>
+                  <button id="chooseEnd" type="button"><span class="point-dot end"></span>终点 <strong id="endCoord">未选择</strong></button>
+                  <button id="addPoint" type="button"><span class="point-dot via"></span><span id="addPointLabel">增加途经点</span></button>
+                </div>
+                <div id="pointList" class="point-list"></div>
+                <p class="hint" id="mapHint">点击“起点”，然后在地图上点选</p>
                 <label class="slider-label" for="riskSlider"><span>地形保守系数</span><output id="riskValue">7</output></label>
                 <input id="riskSlider" type="range" min="1" max="10" value="7" />
                 <button class="primary-button" id="planRoute">规划安全路径</button>
@@ -80,6 +99,7 @@
                   <div><span>最大坡度</span><strong id="slopeMetric">—</strong></div>
                   <div><span>节点数</span><strong id="nodeMetric">—</strong></div>
                 </div>
+                <p class="visit-order" id="visitOrder"></p>
                 <canvas id="profileCanvas" class="profile-chart" aria-label="航迹高程剖面"></canvas>
                 <button class="secondary-button" id="exportRoute">下载航迹数据</button>
               </div>
@@ -117,8 +137,11 @@
             <div class="data-card">
               <span>数据源</span>
               <strong>NASA / GSFC</strong>
-              <small>LRO WAC 影像<br />LOLA 高程模型</small>
+              <small>LRO WAC 影像<br /><span id="dataResolution">LOLA 全球高程</span></small>
             </div>
+            <label class="slider-label" for="heightSlider"><span>三维高度夸张</span><output id="heightValue">4×</output></label>
+            <input id="heightSlider" type="range" min="1" max="8" value="4" />
+            <p class="scale-note">按真实水平距离计算，默认垂直高度放大 4 倍。</p>
           </aside>
         </section>
       </main>
@@ -127,11 +150,11 @@
         <button class="dialog-close" id="closeDialog" aria-label="关闭">×</button>
         <p class="eyebrow">ABOUT THE DATA</p>
         <h2>这里显示的地形来自真实月球测绘数据</h2>
-        <p>月面底图来自 NASA 月球勘测轨道飞行器（LRO）的广角相机拼接影像；高程来自月球轨道器激光高度计（LOLA）全球格网产品。浏览器中的着色、风险分级与航迹是为交互演示实时计算的。</p>
-        <dl><div><dt>水平采样</dt><dd>16 像素 / 度</dd></div><div><dt>高程基准</dt><dd>月球半径 1737.4 km</dd></div><div><dt>算法</dt><dd>A* + 坡度代价</dd></div></dl>
+        <p>月面底图来自 NASA LRO 广角相机拼接影像；高程来自 LOLA 全球格网产品。5° × 5° 是本 demo 的交互分片，而非原始数据文件的分片方式。全月面共有 2,592 片，每片约 <span id="aboutTilePixels">160 × 160</span> 个高程采样；显示与路径曲线会插值，但不会产生新的测量细节。</p>
+        <dl><div><dt>水平采样</dt><dd id="aboutResolution">32 像素 / 度</dd></div><div><dt>高程基准</dt><dd>月球半径 1737.4 km</dd></div><div><dt>算法</dt><dd>A* + 精确多点排序</dd></div></dl>
         <p class="fine-print">该 demo 是科研展示与算法原型，不替代任务级地图、定位、动力学与安全验证。</p>
       </dialog>
     </div>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app-v2.js"></script>
   </body>
 </html>
