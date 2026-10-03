@@ -15,6 +15,18 @@ async function mapClick(page, x, y) {
   await page.mouse.click(point.x, point.y);
 }
 
+async function assertSquarePreview(page) {
+  const preview = await page.locator("#regionPreview").evaluate((canvas) => {
+    const box = canvas.getBoundingClientRect();
+    return { width: box.width, height: box.height,
+      rasterWidth: canvas.width, rasterHeight: canvas.height };
+  });
+  if (Math.abs(preview.width - preview.height) > 1 || preview.rasterWidth !== preview.rasterHeight) {
+    throw new Error(`Terrain preview is not square: ${JSON.stringify(preview)}`);
+  }
+  return preview;
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true,
     executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" });
@@ -25,6 +37,7 @@ async function mapClick(page, x, y) {
 
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
   await page.waitForFunction(() => document.querySelector("#regionCoordinates").textContent.includes("°"));
+  const desktopPreview = await assertSquarePreview(page);
   await page.screenshot({ path: path.join(output, "globe.png") });
   const before = await page.locator("#moonCanvas").evaluate((canvas) => canvas.toDataURL().slice(1000, 5000));
   const globe = await page.locator("#moonCanvas").boundingBox();
@@ -83,12 +96,14 @@ async function mapClick(page, x, y) {
   mobile.on("pageerror", (error) => errors.push(`mobile: ${error.message}`));
   await mobile.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
   await mobile.waitForFunction(() => document.querySelector("#regionCoordinates").textContent.includes("°"));
+  const mobilePreview = await assertSquarePreview(mobile);
   await mobile.screenshot({ path: path.join(output, "mobile-globe.png"), fullPage: true });
   await mobile.click("#enterPlanner");
   await mobile.waitForSelector("#canvasLoading", { state: "hidden", timeout: 30000 });
   await mobile.screenshot({ path: path.join(output, "mobile-planner.png"), fullPage: true });
 
-  const result = { selected, orderedKm, order, polarLabel, polarKm, errors };
+  const result = { selected, orderedKm, order, polarLabel, polarKm,
+    desktopPreview, mobilePreview, errors };
   fs.writeFileSync(path.join(output, "verification.json"), JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result));
   await browser.close();

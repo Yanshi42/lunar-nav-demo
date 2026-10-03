@@ -51,11 +51,11 @@ async function drawPreview(tile) {
   const canvas = $("#regionPreview");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const box = canvas.getBoundingClientRect();
-  canvas.width = Math.round(box.width * dpr);
-  canvas.height = Math.round(box.height * dpr);
+  const side = Math.min(box.width, box.height);
+  canvas.width = canvas.height = Math.round(side * dpr);
   const ctx = canvas.getContext("2d");
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.fillStyle = "#10242d"; ctx.fillRect(0, 0, box.width, box.height);
+  ctx.fillStyle = "#10242d"; ctx.fillRect(0, 0, side, side);
   try {
     const size = 128;
     const raster = await loadTileRaster(tile, size, state.ppd, false);
@@ -64,7 +64,7 @@ async function drawPreview(tile) {
     preview.width = preview.height = size;
     preview.getContext("2d").putImageData(new ImageData(raster.relief, size, size), 0, 0);
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(preview, 0, 0, box.width, box.height);
+    ctx.drawImage(preview, 0, 0, side, side);
   } catch (error) {
     if (tile.id === state.tile.id) console.error(error);
   }
