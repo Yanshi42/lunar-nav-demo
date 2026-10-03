@@ -1,0 +1,50 @@
+[
+  {
+    "id": "copernicus",
+    "name": "哥白尼环形山",
+    "subtitle": "Copernicus · 月球雨海东缘",
+    "lat": 9.62,
+    "lon": -20.08,
+    "span": 9.0,
+    "description": "大型年轻撞击坑与阶梯状坑壁，适合演示坡度规避。",
+    "minElevation": -3567,
+    "maxElevation": 516,
+    "meanElevation": -997,
+    "widthKm": 269.1,
+    "heightKm": 272.9,
+    "heightAsset": "assets/copernicus-height.png",
+    "reliefAsset": "assets/copernicus-relief.jpg"
+  },
+  {
+    "id": "taurus-littrow",
+    "name": "陶拉斯-利特罗谷",
+    "subtitle": "Apollo 17 · 登陆区",
+    "lat": 20.19,
+    "lon": 30.77,
+    "span": 8.0,
+    "description": "阿波罗 17 号登陆区，山谷与低缓平原并存。",
+    "minElevation": -3553,
+    "maxElevation": 604,
+    "meanElevation": -1801,
+    "widthKm": 227.7,
+    "heightKm": 242.6,
+    "heightAsset": "assets/taurus-littrow-height.png",
+    "reliefAsset": "assets/taurus-littrow-relief.jpg"
+  },
+  {
+    "id": "tycho",
+    "name": "第谷环形山",
+    "subtitle": "Tycho · 月球南部高地",
+    "lat": -43.31,
+    "lon": -11.36,
+    "span": 10.0,
+    "description": "陡峭坑壁与中央峰地形，适合高风险路线对比。",
+    "minElevation": -3490,
+    "maxElevation": 1752,
+    "meanElevation": -425,
+    "widthKm": 220.6,
+    "heightKm": 303.2,
+    "heightAsset": "assets/tycho-height.png",
+    "reliefAsset": "assets/tycho-relief.jpg"
+  }
+]

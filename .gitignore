@@ -1,0 +1,7 @@
+# Local source material and preparation tools are not part of the deployed Site.
+source-data/
+.video-tools/
+reference-frames/
+test-output/
+.sites-runtime/
+
