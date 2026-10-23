@@ -2,16 +2,17 @@
 
 基于 NASA LRO WAC 月面影像与 LOLA 全球高程数据制作的浏览器端月球表面导航 demo。
 
-在线体验：[月面航迹 · LunarNav](https://lunar-nav-terrain-demo.justinxu082.chatgpt.site/)
+在线体验：[月面航迹 · LunarNav](https://yanshi42.github.io/lunar-nav-demo/)
+
+长期沿用上述GitHub Pages地址，旧Sites地址保留历史原版。
 
 临时服务器的4173端口已按用户要求关闭（2026-10-23）；原服务器地址目前不提供服务。上方原始 Sites 链接保留原版内容。
 
 当前工作已暂停。最后正式图层版本为 `20261023-native12`：16片、18575个主要候选。`20261023-native13` 的21片候选版已通过预发布验收，未切换正式版本；另有1片完成科学推理核验。以下服务器访问链接及“当前”表述为历史发布记录。
 
-本仓库同步前端、检查工具及记录，不上传生成的科学数据包、权重或诊断资产。原环境的数据包保留在 `/data/spatial/lunar-fm/mapping/products/`；如需本地复现图层，可在仓库根目录连接已准备的数据，再自行启动服务：
+GitHub Pages发布包含最后正式版本16片WAC和两幅水冰图的浏览器必需资源，候选GeoJSON与水冰预测GeoTIFF可直接下载；源影像、权重、完整科学归档和试验诊断资产继续保留本机。静态图层打包工具为`tools/package-pages-lfm.py`，逐文件核对原科学包哈希，不改变预测值或候选对象。原环境的完整科学归档保留在 `/data/spatial/lunar-fm/mapping/products/`。仓库已附带网页所需静态资源，可在仓库根目录自行启动本地服务：
 
 ```bash
-ln -s /data/spatial/lunar-fm/mapping/products/lfm-20261023-native12 dist/assets/lfm-20261023-native12
 python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 ```
 

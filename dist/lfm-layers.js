@@ -1,6 +1,6 @@
 import { coordinateVector, vectorFaceUv } from './sphere-grid.js';
 
-const BASE = 'assets/lfm-20261023-native12/';
+const BASE = 'assets/lfm-pages-native12/';
 const CONFIG = {
   ice: { title: '基地水冰潜力', color: '#62dce8', note: '南北极拼接 · 模型预测冰赋存潜力' },
   wac: { title: 'WAC 撞击坑', color: '#ffd25a', note: '完整导航分片 · 连续科学影像推理' },
@@ -134,11 +134,11 @@ export class LfmLayers {
       browse.onclick = () => this.openDetail(select.value); host.append(browse);
       const hint = node('p', 'WAC 按完整导航分片发布。水冰为南北极历史模型拼接，包含训练、验证与测试区域；当前科学结果尚未覆盖全月。', 'lfm-note');
       host.append(hint);
-      const experiment = node('a', 'WAC 同地点输入对照（原景／拼接）', 'lfm-note');
-      experiment.href = 'wac-input-control/'; experiment.target = '_blank'; experiment.rel = 'noopener';
+      const experiment = node('a', 'WAC 输入与连续视野检查记录', 'lfm-note');
+      experiment.href = 'https://github.com/Yanshi42/LunarFoundationModel/blob/main/analysis/WAC-full-crater-native-context-progress-20261022.md'; experiment.target = '_blank'; experiment.rel = 'noopener';
       host.append(experiment);
-      const trainedTrial = node('a', 'f4-r01-c10 · 整片撞击坑检测与对比', 'lfm-note');
-      trainedTrial.href = 'wac-trained-preview.html'; trainedTrial.target = '_blank'; trainedTrial.rel = 'noopener';
+      const trainedTrial = node('a', '撞击坑训练与评估记录', 'lfm-note');
+      trainedTrial.href = 'https://github.com/Yanshi42/LunarFoundationModel/blob/main/analysis/WAC-confirmation-and-large-crater-evidence-20261022.md'; trainedTrial.target = '_blank'; trainedTrial.rel = 'noopener';
       host.append(trainedTrial);
     }
     this.updateControls();

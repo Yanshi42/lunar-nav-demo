@@ -1,0 +1,94 @@
+{
+  "body": "Moon",
+  "radius_m": 1737400,
+  "science_version": "20261023-native12",
+  "summary": {
+    "complete_tiles": 16,
+    "with_valid_input": 16,
+    "moon_surface_fraction": 0.008714580552393984,
+    "valid_input_area_km2": 330564.32876188884,
+    "scope": "Published complete navigation cells only; historical patch coverage excluded."
+  },
+  "tiles": {
+    "f4-r01-c10": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20991.586709165473,
+      "inferred_area_km2": 20991.586709165473
+    },
+    "f4-r02-c10": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20222.434710924408,
+      "inferred_area_km2": 20222.434710924408
+    },
+    "f5-r10-c01": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20991.58670916553,
+      "inferred_area_km2": 20991.58670916553
+    },
+    "f5-r11-c01": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20925.2377086203,
+      "inferred_area_km2": 20925.2377086203
+    },
+    "f4-r02-c11": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20190.91272749207,
+      "inferred_area_km2": 20190.91272749207
+    },
+    "f4-r01-c11": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20925.237708620356,
+      "inferred_area_km2": 20925.237708620356
+    },
+    "f4-r02-c09": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20222.434710924474,
+      "inferred_area_km2": 20222.434710924474
+    },
+    "f5-r09-c01": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20991.586709165585,
+      "inferred_area_km2": 20991.586709165585
+    },
+    "f4-r01-c09": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20991.5867091656,
+      "inferred_area_km2": 20991.5867091656
+    },
+    "f4-r01-c08": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20925.237708620298,
+      "inferred_area_km2": 20925.237708620298
+    },
+    "f4-r01-c07": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20789.031398073206,
+      "inferred_area_km2": 20789.031398073206
+    },
+    "f5-r12-c01": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20789.03139807315,
+      "inferred_area_km2": 20789.03139807315
+    },
+    "f4-r03-c10": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 19703.24201969277,
+      "inferred_area_km2": 19703.24201969277
+    },
+    "f5-r11-c02": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20190.912727492112,
+      "inferred_area_km2": 20190.912727492112
+    },
+    "f5-r08-c01": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20925.237708620334,
+      "inferred_area_km2": 20925.237708620334
+    },
+    "f4-r01-c12": {
+      "inferred_coverage_fraction": 1.0,
+      "cell_area_km2": 20789.03139807319,
+      "inferred_area_km2": 20789.03139807319
+    }
+  }
+}

@@ -14,3 +14,7 @@ __pycache__/
 /dist/wac-finetune-audit/
 /dist/wac-input-control/
 /dist/wac-thresholds/
+
+# Portable public assets for the last released16-cell science version.
+!/dist/assets/lfm-pages-native12/
+!/dist/assets/lfm-pages-native12/**

@@ -1,0 +1,180 @@
+{
+  "version": "20261023-native12",
+  "body": "Moon",
+  "radius_m": 1737400,
+  "presentation": "complete_navigation_tiles",
+  "scope": "Complete native WAC inference with user-selected first large model; retained polar ice maps. Independent crater accuracy acceptance remains unestablished.",
+  "tasks": {
+    "wac": {
+      "catalog": "wac-catalog.json",
+      "product_count": 16,
+      "input_count": 5951,
+      "candidate_count": 18575,
+      "unique_valid_area_km2": 330564.32876188884,
+      "vector_tiles": {
+        "f4-r01-c10": [
+          {
+            "id": "f4-r01-c10",
+            "count": 944,
+            "file": "wac-vectors/f4-r01-c10/complete.json"
+          }
+        ],
+        "f4-r02-c10": [
+          {
+            "id": "f4-r02-c10",
+            "count": 1182,
+            "file": "wac-vectors/f4-r02-c10/complete.json"
+          }
+        ],
+        "f5-r10-c01": [
+          {
+            "id": "f5-r10-c01",
+            "count": 1505,
+            "file": "wac-vectors/f5-r10-c01/complete.json"
+          }
+        ],
+        "f5-r11-c01": [
+          {
+            "id": "f5-r11-c01",
+            "count": 1563,
+            "file": "wac-vectors/f5-r11-c01/complete.json"
+          }
+        ],
+        "f4-r02-c11": [
+          {
+            "id": "f4-r02-c11",
+            "count": 1232,
+            "file": "wac-vectors/f4-r02-c11/complete.json"
+          }
+        ],
+        "f4-r01-c11": [
+          {
+            "id": "f4-r01-c11",
+            "count": 1099,
+            "file": "wac-vectors/f4-r01-c11/complete.json"
+          }
+        ],
+        "f4-r02-c09": [
+          {
+            "id": "f4-r02-c09",
+            "count": 1039,
+            "file": "wac-vectors/f4-r02-c09/complete.json"
+          }
+        ],
+        "f5-r09-c01": [
+          {
+            "id": "f5-r09-c01",
+            "count": 1204,
+            "file": "wac-vectors/f5-r09-c01/complete.json"
+          }
+        ],
+        "f4-r01-c09": [
+          {
+            "id": "f4-r01-c09",
+            "count": 1083,
+            "file": "wac-vectors/f4-r01-c09/complete.json"
+          }
+        ],
+        "f4-r01-c08": [
+          {
+            "id": "f4-r01-c08",
+            "count": 1343,
+            "file": "wac-vectors/f4-r01-c08/complete.json"
+          }
+        ],
+        "f4-r01-c07": [
+          {
+            "id": "f4-r01-c07",
+            "count": 975,
+            "file": "wac-vectors/f4-r01-c07/complete.json"
+          }
+        ],
+        "f5-r12-c01": [
+          {
+            "id": "f5-r12-c01",
+            "count": 948,
+            "file": "wac-vectors/f5-r12-c01/complete.json"
+          }
+        ],
+        "f4-r03-c10": [
+          {
+            "id": "f4-r03-c10",
+            "count": 1066,
+            "file": "wac-vectors/f4-r03-c10/complete.json"
+          }
+        ],
+        "f5-r11-c02": [
+          {
+            "id": "f5-r11-c02",
+            "count": 1406,
+            "file": "wac-vectors/f5-r11-c02/complete.json"
+          }
+        ],
+        "f5-r08-c01": [
+          {
+            "id": "f5-r08-c01",
+            "count": 1153,
+            "file": "wac-vectors/f5-r08-c01/complete.json"
+          }
+        ],
+        "f4-r01-c12": [
+          {
+            "id": "f4-r01-c12",
+            "count": 833,
+            "file": "wac-vectors/f4-r01-c12/complete.json"
+          }
+        ]
+      }
+    },
+    "ice": {
+      "catalog": "ice-catalog.json",
+      "product_count": 2,
+      "input_count": 156,
+      "candidate_count": 0,
+      "tiles": [
+        "f5-r07-c09",
+        "f5-r07-c10",
+        "f5-r08-c08",
+        "f5-r08-c09",
+        "f5-r08-c10",
+        "f5-r08-c11",
+        "f5-r09-c07",
+        "f5-r09-c08",
+        "f5-r09-c09",
+        "f5-r09-c10",
+        "f5-r09-c11",
+        "f5-r10-c07",
+        "f5-r10-c08",
+        "f5-r10-c09",
+        "f5-r10-c10",
+        "f5-r10-c11",
+        "f5-r11-c08",
+        "f5-r11-c09",
+        "f5-r11-c10",
+        "f5-r11-c11",
+        "f6-r07-c09",
+        "f6-r07-c10",
+        "f6-r08-c08",
+        "f6-r08-c09",
+        "f6-r08-c10",
+        "f6-r08-c11",
+        "f6-r09-c07",
+        "f6-r09-c08",
+        "f6-r09-c09",
+        "f6-r09-c10",
+        "f6-r09-c11",
+        "f6-r10-c07",
+        "f6-r10-c08",
+        "f6-r10-c09",
+        "f6-r10-c10",
+        "f6-r10-c11",
+        "f6-r11-c08",
+        "f6-r11-c09",
+        "f6-r11-c10",
+        "f6-r11-c11"
+      ],
+      "unique_valid_area_km2": 524666.3877514005
+    }
+  },
+  "restored_ice_source": "/home/spatial/work/lunar-fm/mapping/products/lunarnav-20261021-v2"
+}
