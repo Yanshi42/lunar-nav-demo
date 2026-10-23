@@ -3,7 +3,7 @@ import { TILE_COUNT, tileCoordinate, tileDimensionsKm, tileFromCoordinate } from
 import { loadTileRaster } from "./terrain-source.js";
 import { Terrain } from "./terrain.js?v=20261021-lfm1";
 import { Router } from "./routing.js";
-import { LfmLayers } from './lfm-layers.js?v=20261022-inputcontrol1';
+import { LfmLayers } from './lfm-layers.js?v=20261023-pages-native12';
 
 const $ = (query) => document.querySelector(query);
 const $$ = (query) => [...document.querySelectorAll(query)];
