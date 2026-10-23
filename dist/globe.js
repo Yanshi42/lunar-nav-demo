@@ -162,6 +162,7 @@ export class LunarGlobe {
     this.ctx.beginPath(); this.ctx.arc(g.cx, g.cy, g.radius, 0, Math.PI * 2);
     this.ctx.strokeStyle = "rgba(120, 204, 213, .48)"; this.ctx.lineWidth = 1; this.ctx.stroke();
     this.drawGrid(g);
+    this.modelLayers?.drawGlobe(this, g);
     if (this.hover) this.drawTile(this.hover, g, "rgba(255, 210, 90, .7)", 1.2);
     if (this.selected) this.drawTile(this.selected, g, "#69f2df", 2.5);
   }

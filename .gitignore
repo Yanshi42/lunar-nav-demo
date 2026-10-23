@@ -4,4 +4,13 @@ source-data/
 reference-frames/
 test-output/
 .sites-runtime/
+dist/assets/lfm-*
+__pycache__/
 
+
+# Generated scientific releases and diagnostic pages stay on the data disk.
+/dist/assets/wac-*/
+/dist/assets/wac-navigation-coverage-*.json
+/dist/wac-finetune-audit/
+/dist/wac-input-control/
+/dist/wac-thresholds/

@@ -151,6 +151,37 @@ input[type="range"] { width:100%; accent-color:var(--teal); }
 .data-card strong { display:block; margin:4px 0; font-size:11px; }
 .scale-note { color:#6d858e; font-size:10px; line-height:1.5; }
 
+.lfm-controls { margin-top:20px; border-top:1px solid var(--line); padding-top:14px; }
+.lfm-heading { margin:0 0 6px; color:var(--teal); font-size:12px; font-weight:800; letter-spacing:.06em; }
+.lfm-toggle { padding:9px 0; }
+.lfm-toggle b::before { content:""; display:inline-block; width:6px; height:6px; margin-right:6px; border-radius:50%; background:var(--task-color); }
+.lfm-note, .lfm-status { font-size:10px; color:#94abb3; line-height:1.65; margin:8px 0; }
+.lfm-status { color:#a6d9d1; overflow-wrap:anywhere; }
+.lfm-gradient { height:6px; margin-top:9px; border-radius:9px; background:linear-gradient(90deg,#440154,#3b528b,#21918c,#5ec962,#fde725); }
+.lfm-products { font-size:11px; padding:9px 6px; text-overflow:ellipsis; margin:6px 0 9px; }
+.lfm-open { font-size:11px; padding:9px; }
+.lfm-observation-controls label { margin:8px 0; font-size:10px; }
+.lfm-observation-controls select { margin-top:5px; padding:8px 5px; font-size:10px; text-overflow:ellipsis; }
+.lfm-observation-controls[hidden], .lfm-observation-controls label[hidden] { display:none; }
+button:disabled { opacity:.45; cursor:default; }
+.layer-panel { max-height:calc(100vh - 100px); overflow-y:auto; scrollbar-color:#314752 transparent; }
+.layer-panel .lfm-controls { margin-top:0; padding-top:0; border-top:0; padding-bottom:16px; }
+.planner-view { grid-template-columns:284px minmax(0,1fr) 240px; }
+#lfmDetail { width:min(1080px,calc(100vw - 32px)); max-height:calc(100vh - 40px); overflow:auto; }
+#lfmDetail h2 { font-size:24px; margin:0; }
+#lfmDetailInfo, #lfmDetailProbe { font-size:12px; margin:10px 0; }
+.lfm-source { overflow-wrap:anywhere; font-size:11px; }
+.lfm-detail-toolbar { display:flex; flex-wrap:wrap; gap:18px; align-items:center; margin-bottom:14px; }
+.lfm-detail-toolbar label { flex:1; min-width:130px; margin:0; }
+.lfm-detail-toolbar button { width:auto; font-size:11px; }
+#lfmDetailViewport { max-height:56vh; min-height:220px; overflow:auto; display:block; border:1px solid var(--line); border-radius:8px; padding:12px; background:repeating-conic-gradient(#16232b 0% 25%,#0c171f 0% 50%) 50% / 20px 20px; }
+#lfmDetailCanvas { display:block; margin:auto; height:auto; image-rendering:pixelated; max-width:none; cursor:crosshair; }
+.lfm-downloads { display:flex; gap:15px; flex-wrap:wrap; margin:14px 0; }
+.lfm-downloads a { color:var(--teal); font-size:12px; text-decoration:underline; text-underline-offset:3px; }
+#lfmDetail details { font-size:11px; color:#8fa5ad; }
+#lfmDetail summary { cursor:pointer; padding:8px 0; }
+#lfmDetail pre { white-space:pre-wrap; overflow-wrap:anywhere; font-size:10px; max-height:140px; overflow:auto; }
+
 dialog { width:min(520px,calc(100vw - 32px)); border:1px solid var(--line-strong); border-radius:16px; background:#0a151e; color:var(--text); padding:28px; box-shadow:0 30px 100px #000; }
 dialog::backdrop { background:rgba(0,5,8,.78); backdrop-filter:blur(8px); }
 dialog h2 { font-size:26px; letter-spacing:-.03em; }
@@ -164,7 +195,7 @@ dialog dd { margin:5px 0 0; font-size:11px; }
 @media (max-width: 1050px) {
   .globe-view { grid-template-columns: .8fr 1.7fr 1fr; }
   .planner-view { grid-template-columns:250px minmax(0,1fr); }
-  .layer-panel { position:absolute; right:0; top:84px; width:172px; z-index:5; }
+  .layer-panel { position:absolute; right:0; top:84px; width:208px; z-index:5; }
 }
 @media (max-width: 760px) {
   body { overflow:auto; }
@@ -179,6 +210,6 @@ dialog dd { margin:5px 0 0; font-size:11px; }
   .planner-view { min-height:calc(100vh - 64px); height:auto; display:flex; flex-direction:column; }
   .planner-sidebar { order:2; overflow:visible; border-right:0; }
   .map-workspace { order:1; height:70vh; min-height:520px; }
-  .layer-panel { display:none; }
+  .layer-panel { display:block; order:3; position:static; width:auto; margin:0 14px 20px; max-height:none; }
   .cursor-readout { max-width:60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 }

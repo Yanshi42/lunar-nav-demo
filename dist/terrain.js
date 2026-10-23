@@ -140,6 +140,7 @@ export class Terrain {
       }
       ctx.strokeStyle = "rgba(185, 240, 237, .075)"; ctx.lineWidth = 0.5; ctx.stroke();
     }
+    this.modelLayers?.draw2d(ctx, r);
     this.strokeRoute((p) => ({ x: r.x + p.x * r.size, y: r.y + p.y * r.size }), 2.7);
     this.points.forEach((point) => this.marker(r.x + point.x * r.size, r.y + point.y * r.size, point.label, point.color));
     ctx.strokeStyle = "rgba(113, 222, 213, .42)"; ctx.lineWidth = 1; ctx.strokeRect(r.x, r.y, r.size, r.size);
@@ -191,10 +192,13 @@ export class Terrain {
         ctx.fillStyle = `rgba(255, 82, 93, ${clamp((slope - 7) / 23, 0, 0.36)})`;
         ctx.fill();
       }
+      const modelColor = this.modelLayers?.cellColor(u, v);
+      if (modelColor) { ctx.fillStyle = modelColor; ctx.fill(); }
       if (this.layers.grid && (cell.x % 8 === 0 || cell.y % 8 === 0)) {
         ctx.strokeStyle = "rgba(189, 240, 235, .055)"; ctx.lineWidth = 0.45; ctx.stroke();
       }
     }
+    this.modelLayers?.draw3d(ctx, (p) => this.project3d(p, width, height));
     this.strokeRoute((p) => { const result = this.project3d(p, width, height); return { x: result.x, y: result.y - 2 }; }, 2.5);
     this.points.forEach((point) => { const p = this.project3d(point, width, height); this.marker(p.x, p.y - 2, point.label, point.color); });
   }
