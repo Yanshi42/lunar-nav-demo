@@ -96,7 +96,7 @@ export class LunarGlobe {
     this.canvas.addEventListener("pointerup", (event) => {
       if (this.drag && !this.drag.moved) {
         const coord = this.coordinateAt(event);
-        if (coord) this.onSelect(tileFromCoordinate(coord.lat, coord.lon));
+        if (coord) { this.modelLayers?.inspectGlobe?.(coord); this.onSelect(tileFromCoordinate(coord.lat, coord.lon)); }
       }
       this.drag = null;
     });

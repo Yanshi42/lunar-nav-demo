@@ -213,3 +213,5 @@ dialog dd { margin:5px 0 0; font-size:11px; }
   .layer-panel { display:block; order:3; position:static; width:auto; margin:0 14px 20px; max-height:none; }
   .cursor-readout { max-width:60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 }
+
+.head-catalog{border-top:1px solid rgba(238,153,255,.25);margin-top:14px;padding-top:12px}.head-catalog b{color:#ee99ff}.head-options{display:grid;gap:9px}.head-search,.head-select{box-sizing:border-box;width:100%;min-width:0;font:inherit;color:inherit;background:#0d1c25;border:1px solid #344957;border-radius:7px;padding:8px}.head-detail{overflow-wrap:anywhere}.head-downloads{display:flex;flex-wrap:wrap;gap:4px}.head-jump{width:100%}

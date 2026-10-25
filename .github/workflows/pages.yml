@@ -25,6 +25,8 @@ jobs:
         uses: actions/checkout@v6
       - name: Verify portable science assets
         run: python3 tools/verify-pages-assets.py
+      - name: Verify Head spherical geometry
+        run: node tools/verify-head-geometry.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site

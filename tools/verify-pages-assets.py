@@ -26,3 +26,18 @@ for task in manifest['tasks'].values():
             assert entry['file'] in proof['checksums']
 assert "const BASE = 'assets/lfm-pages-native12/';" in (root / 'dist/lfm-layers.js').read_text()
 print(f"Verified {len(proof['checksums'])} portable files:16 WAC cells,18575 candidates,2 ice mosaics")
+
+# The reference catalogue is separate from model outputs and must keep every row.
+import csv
+head_base = root / 'dist/assets/head-catalog'
+head = json.loads((head_base / 'head.json').read_text())
+raw = (head_base / 'HeadCraters.csv').read_bytes()
+assert hashlib.sha256(raw).hexdigest() == '6bb968015a43d16874311aedfc43168c57bcc561f37afdc566870958f238e46a'
+assert head['source_sha256'] == hashlib.sha256(raw).hexdigest()
+with (head_base / 'HeadCraters.csv').open(newline='') as stream:
+    rows = list(csv.DictReader(stream))
+assert head['count'] == len(rows) == len(head['records']) == 5185
+assert head['body'] == 'Moon' and head['radius_km'] == 1737.4
+assert head['records'] == [[float(row[key]) for key in ('Lon','Lat','Diam_km')] for row in rows]
+assert (head_base / 'DeepMoon-LICENSE.md').is_file()
+print('Verified complete pinned Head catalogue:5185 source rows, exact values/order and original CSV SHA256')

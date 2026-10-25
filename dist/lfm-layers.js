@@ -1,3 +1,4 @@
+import { HeadCatalogLayer } from './head-catalog.js?v=20261025-head1';
 import { coordinateVector, vectorFaceUv } from './sphere-grid.js';
 
 const BASE = 'assets/lfm-pages-native12/';
@@ -55,6 +56,7 @@ function strokeLines(ctx, lines, project) {
 export class LfmLayers {
   constructor(onChange, onJump) {
     this.onChange = onChange;
+    this.head = new HeadCatalogLayer(onChange, onJump);
     this.onJump = onJump;
     this.enabled = new Set(['wac', 'ice']);
     this.catalogs = new Map();
@@ -74,6 +76,7 @@ export class LfmLayers {
   }
 
   async init() {
+    this.head.init();
     try {
       this.manifest = await json('manifest.json');
       if (this.manifest.body !== 'Moon' || this.manifest.radius_m !== 1737400) throw new Error('图层天体信息不匹配');
@@ -86,6 +89,7 @@ export class LfmLayers {
       this.bindDetail();
     } catch (error) {
       document.querySelectorAll('.lfm-controls').forEach((el) => el.replaceChildren(node('p', `LFM 图层暂不可用：${error.message}`, 'lfm-note')));
+      this.head.mount();
       console.error(error);
     }
   }
@@ -141,6 +145,7 @@ export class LfmLayers {
       trainedTrial.href = 'https://github.com/Yanshi42/LunarFoundationModel/blob/main/analysis/WAC-confirmation-and-large-crater-evidence-20261022.md'; trainedTrial.target = '_blank'; trainedTrial.rel = 'noopener';
       host.append(trainedTrial);
     }
+    this.head.mount();
     this.updateControls();
   }
 
@@ -236,6 +241,7 @@ export class LfmLayers {
 
   async setTile(tile) {
     const generation = ++this.generation;
+    this.head.setTile(tile);
     this.tile = tile; this.iceImage = null; this.icePixels = null;
     this.region = tile ? this.allItems().filter((item) => intersectsTile(item, tile)) : [];
     this.regionBoxes = [];
@@ -296,7 +302,10 @@ export class LfmLayers {
       }
     }
     ctx.restore();
+    this.head.drawGlobe(globe, g);
   }
+
+  inspectGlobe(coordinate) { this.head.inspectCoordinate(coordinate); }
 
   drawVectors(ctx, project, projectLocal) {
     for (const item of this.region) {
@@ -341,6 +350,7 @@ export class LfmLayers {
       const p = localCoordinate(this.tile, lon, lat);
       return p ? { x: rect.x + p.x * rect.size, y: rect.y + p.y * rect.size } : null;
     }, (p) => ({ x: rect.x + p.x * rect.size, y: rect.y + p.y * rect.size }));
+    this.head.draw2d(ctx, rect);
     ctx.restore();
   }
 
@@ -359,9 +369,11 @@ export class LfmLayers {
       return p && p.x >= 0 && p.x <= 1 && p.y >= 0 && p.y <= 1 ? project(p) : null;
     }, (p) => p.x >= 0 && p.x <= 1 && p.y >= 0 && p.y <= 1 ? project(p) : null);
     ctx.restore();
+    this.head.draw3d(ctx, project);
   }
 
   inspect(point) {
+    if (this.head.inspect(point)) return true;
     const nearby = this.region.filter((item) => {
       const active = this.manifest.tasks[item.task].vector_tiles?.[this.tile.id]?.some((o) => o.id === this.selectedObservations[item.task]);
       if (active && item.observation && item.observation !== this.selectedObservations[item.task]) return false;

@@ -1,0 +1,8 @@
+{
+  "name": "lunar-nav-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:head": "node tools/verify-head-geometry.mjs"
+  }
+}

@@ -1,0 +1,3 @@
+
+# Preserve the exact CR-delimited source table and its published checksum.
+dist/assets/head-catalog/HeadCraters.csv -text
